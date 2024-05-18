@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #e4e9f7; /* You might want a more interesting background to see the transparency effect */
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+}
+
+.box {
+  background: rgba(253, 253, 253, 0.8); /* Semi-transparent white */
+  display: flex;
+  flex-direction: column;
+  padding: 25px 25px;
+  border-radius: 20px;
+  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1), 
+              0 32px 64px -48px rgba(0, 0, 0, 0.3); /* Softer shadow */
+}
+
+.form-box {
+  width: 450px;
+  margin: 0px 10px;
+}
+
+.form-box header {
+  font-size: 25px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e6e6e6;
+  margin-bottom: 10px;
+}
+
+.form-box form .field {
+  display: flex;
+  margin-bottom: 10px;
+  flex-direction: column;
+}
+
+.form-box form .input input {
+  height: 40px;
+  width: 100%;
+  font-size: 16px;
+  padding: 0 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.btn {
+  height: 35px;
+  background: rgba(76, 68, 182, 0.6); /* Adjusted opacity for button */
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+  padding: 0px 10px;
+}
+
+.btn:hover {
+  background: rgba(76, 68, 182, 0.8); /* Slightly more opaque on hover */
+}
+
+.submit {
+  width: 100%;
+}
+
+.links {
+  margin-bottom: 15px;
+}
+
+.message {
+  text-align: center;
+  background: rgba(249, 237, 237, 0.8); /* Adjust for desired transparency */
+  padding: 15px 0px;
+  border: 1px solid #699053;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  color: red;
+} 

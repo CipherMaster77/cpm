@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Inventory</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            padding: px 0;
+            font-weight: bold;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 30px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            
+        }
+        tr{
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        th {
+            background-color: black;
+            color: #fff;
+        }
+
+        td {
+            font-size: 20px; /* Increase font size for product names and quantity numbers */
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e6e6e6;
+        }
+
+        form {
+            margin-top: 30px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 50px;
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        select {
+            padding: 10px;
+            width: 30%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        input[type="submit"] {
+            padding: 12px 24px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>STOCKS INVENTORY</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity in Stock</th>
+                <th>Update Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Establish connection to the database
+            $con = mysqli_connect("localhost", "root", "", "user_db") or die("Couldn't connect");
+
+            // Query to fetch stock data
+            $query = "SELECT * FROM stocks";
+            $result = mysqli_query($con, $query);
+
+            // Display stock data in table rows
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>";
+                echo "<td>" . $row['product'] . "</td>";
+                echo "<td>" . $row['quantity'] . "</td>";
+                echo "<td>
+                    <form method='POST'>
+                        <input type='hidden' name='update_product' value='" . $row['product'] . "'>
+                        <input type='number' name='update_quantity' min='0' required>
+                        <input type='submit' value='Update'>
+                    </form>
+                </td>";
+                echo "</tr>";
+            }
+
+            // Close connection
+            mysqli_close($con);
+            ?>
+        </tbody>
+    </table>
+</body>
+</html>
+
+<?php
+// Process form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Establish connection to the database
+    $con = mysqli_connect("localhost", "root", "", "user_db") or die("Couldn't connect");
+
+    // Update stock if form is submitted
+    if (isset($_POST['update_product']) && isset($_POST['update_quantity'])) {
+        $product = $_POST['update_product'];
+        $quantity = $_POST['update_quantity'];
+
+        // Update stock in the database
+        $query = "UPDATE stocks SET quantity = $quantity WHERE product = '$product'";
+        $result = mysqli_query($con, $query);
+
+        if ($result) {
+            echo "<script>alert('Stock updated successfully!');</script>";
+        } else {
+            echo "<script>alert('Error updating stock!');</script>";
+        }
+    }
+
+    // Close connection
+    mysqli_close($con);
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN</title>
+<style>
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-size: cover;
+}
+
+.container {
+    position: relative;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidebar ul {
+    list-style: none; 
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li a {
+    padding: 15px 20px; /* Increased padding */
+    text-decoration: none;
+    font-size: 18px; 
+    color: white;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar li a:hover {
+    background-color: rgba(255, 255, 255, 0.15); 
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 15px; /* Adjusted position */
+    right: 35px; /* Adjusted position */
+    font-size: 36px;
+    margin-left: 50px;
+    color: white;
+}
+
+/* Button Styles */
+.openbtn {
+    font-size: 15px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border: none;
+    color: white;
+    padding: 12px 18px;
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    z-index: 2;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.openbtn:hover {
+    background-color: rgba(0, 0, 0, 0.7); 
+}
+
+/* Main Content Styles */
+#main {
+    transition: margin-left 0.5s;
+    padding: 16px;
+}
+</style>
+</head>
+<body>
+    </body>
+</html>
+
+<div class="container">
+    <div class="sidebar" id="mySidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <ul>
+            <li><a href="stocks.php">MANAGE STOCKS</a></li>
+            <li><a href="add_product2.php">ADD PRODUCT </a></li>
+            <li><a href="view_order2.php">VIEW ORDERS</a></li>
+            <li><a href="view_product2.php">VIEW PRODUCTS</a></li>
+        </ul>
+    </div>
+
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">☰ VIEW</button>
+    </div>
+</div>
+
+<script>
+function openNav() {
+    document.getElementById("mySidebar").style.width = "250px"; 
+}
+
+function closeNav() {
+    document.getElementById("mySidebar").style.width = "0";
+}
+</script>
+
+</body>
+</html>
