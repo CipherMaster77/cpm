@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <title>ADD PRODUCT</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #order-form {
+            max-width: 800px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        #order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        #order-table th,
+        #order-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #order-table th {
+            background-color: black;
+            color: #fff;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        #logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #logout-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div id="order-form">
+        <a href="supp.php" id="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+        <?php
+        // Establish database connection
+        $con = mysqli_connect("localhost", "root", "", "user_db") or die("Couldn't connect");
+
+        // Check if the form is submitted
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            // Retrieve form data
+            $productNames = $_POST['product_name'];
+            $productPrices = $_POST['product_price'];
+            $productQuantities = $_POST['product_quantity'];
+
+            // Insert product details into the database
+            foreach ($productNames as $index => $productName) {
+                $price = $productPrices[$index];
+                $quantity = $productQuantities[$index];
+                $productSql = "INSERT INTO products (product_name, price, quantity) VALUES ('$productName', '$price', '$quantity')";
+                mysqli_query($con, $productSql);
+            }
+
+            header("Location: view_product.php");
+            exit();
+        }
+        ?>
+
+        <h2>ADD PRODUCTS</h2>
+        <form id="order-form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <table id="order-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select class="product-name" name="product_name[]">
+                                <option value="ROYAL">ROYAL</option>
+                                <option value="COKE">COKE</option>
+                                <option value="SPRITE">SPRITE</option>
+                                <option value="C2">C2</option>
+                                <option value="Jack Daniels">Jack Daniels</option>
+                                <option value="Root Beer">Root Beer</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="product-price" name="product_price[]">
+                                <option value="15">₱15.00</option>
+                                <option value="70">₱70.00</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="product-quantity" name="product_quantity[]" value="1" min="1"></td>
+                        <td><button type="button" class="remove-button" onclick="removeRow(this)"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="button-container">
+                <button type="button" id="add-button" onclick="addRow()"><i class="fas fa-plus"></i> Add Item</button>
+                <button type="submit" class="order-button"><i class="fas fa-check"></i> ADD PRODUCT</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function addRow() {
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <select class="product-name" name="product_name[]">
+                        <option value="ROYAL">ROYAL</option>
+                        <option value="COKE">COKE</option>
+                        <option value="SPRITE">SPRITE</option>
+                        <option value="C2">C2</option>
+                        <option value="Jack Daniels">Jack Daniels</option>
+                        <option value="Root Beer">Root Beer</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="product-price" name="product_price[]">
+                        <option value="15">₱15.00</option>
+                        <option value="70">₱70.00</option>
+                    </select>
+                </td>
+                <td><input type="number" class="product-quantity" name="product_quantity[]" value="1" min="1"></td>
+                <td><button type="button" class="remove-button" onclick="removeRow(this)"><i class="fas fa-times"></i></button></td>
+            `;
+        document.getElementById('order-table').appendChild(newRow);
+    }
+
+    function removeRow(button) {
+        button.parentNode.parentNode.remove();
+    }
+
+    // Function to display alert on form submission
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Prepare form data for submission
+        var formData = new FormData(this);
+
+        // Send form data to the server using AJAX
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    alert('Add Product successfully.');
+                    location.reload(); // Refresh the page after successful submission
+                } else {
+                    alert('Failed to submit order. Please try again.');
+                }
+            }
+        };
+        xhr.open("POST", "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>", true);
+        xhr.send(formData);
+    });
+</script>
+
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN</title>
+<style>
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+}
+
+.container {
+    position: relative;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidebar ul {
+    list-style: none; 
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li a {
+    padding: 15px 20px; /* Increased padding */
+    text-decoration: none;
+    font-size: 18px; 
+    color: white;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar li a:hover {
+    background-color: rgba(255, 255, 255, 0.15); 
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 15px; /* Adjusted position */
+    right: 35px; /* Adjusted position */
+    font-size: 36px;
+    margin-left: 50px;
+    color: white;
+}
+
+/* Button Styles */
+.openbtn {
+    font-size: 15px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border: none;
+    color: white;
+    padding: 12px 18px;
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    z-index: 2;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.openbtn:hover {
+    background-color: rgba(0, 0, 0, 0.7); 
+}
+
+/* Main Content Styles */
+#main {
+    transition: margin-left 0.5s;
+    padding: 16px;
+}
+</style>
+</head>
+<body>
+    </body>
+</html>
+
+<div class="container">
+    <div class="sidebar" id="mySidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <ul>
+            <li><a href="stocks.php">MANAGE STOCKS</a></li>
+            <li><a href="add_product2.php">ADD PRODUCT </a></li>
+            <li><a href="view_order2.php">VIEW ORDERS</a></li>
+            <li><a href="view_product2.php">VIEW PRODUCTS</a></li>
+        </ul>
+    </div>
+
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">☰ VIEW</button>
+    </div>
+</div>
+
+<script>
+function openNav() {
+    document.getElementById("mySidebar").style.width = "250px"; 
+}
+
+function closeNav() {
+    document.getElementById("mySidebar").style.width = "0";
+}
+</script>
+
+</body>
+</html>
